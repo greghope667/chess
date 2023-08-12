@@ -40,7 +40,7 @@ func evaluate(board: var Board): int =
       else:
         result += 5 * (rank - 7)
 
-  when false: # false for faster but worse moves
+  when true: # false for faster but worse moves
     result += pseudoMoves(board).len
     board.flip()
     result -= pseudoMoves(board).len

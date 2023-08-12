@@ -150,7 +150,7 @@ func `$`*(si: SearchInfo): string =
     result.add($si.nodes)
   if si.time > 0 and si.nodes > 0:
     result.add(" nps ")
-    result.add($(1000 * si.nodes / si.time))
+    result.add($int(1000 * si.nodes / si.time))
 
   result.add(" score cp ")
   result.add($si.score)
