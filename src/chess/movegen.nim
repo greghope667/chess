@@ -247,7 +247,7 @@ func pawnPromoteMoves(list: var MoveList, board: Board) =
           continue
 
         let target = board[mv.dst]
-        if (cast[uint8](target) and 0b11000u8) != 0:
+        if (cast[uint8](target) and 0b11000u8) == 0b11000u8:
           # Occupied by black
           promote(list)
 

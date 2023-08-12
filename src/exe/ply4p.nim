@@ -78,7 +78,7 @@ proc negamax(board: var Board, depth: int): tuple[move:Move, score:int] =
 
 proc search(board: var Board, depth: int): tuple[move:Move, score:int, nodes:int] =
   nodes = 0
-  (result.move, result.score) = negamax(board, depth)
+  (result.move, result.score) = negamax(board, 4)
   result.nodes = nodes
 
 middleend.search = search
