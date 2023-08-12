@@ -1,0 +1,4 @@
+/exe/
+
+/tests/*
+!/tests/*.*
