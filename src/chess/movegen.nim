@@ -282,3 +282,32 @@ func pseudoMoves*(board: Board): MoveList =
   castleMoves(result, board)
 
 func inCheck*(board: Board): bool = isAttacked(board, board.whitekingpos)
+
+# Some helper macros for boilerplate code
+
+template withMakeMove*(board: var Board, move: Move, actions: untyped) =
+  let hist = makeMove(board, move)
+  defer: unmakeMove(board, move, hist)
+
+  if not inCheck(board):
+    board.flip()
+    defer: board.flip()
+    actions
+
+template forAllLegalMoves*(board: var Board, actions: untyped) =
+  for move in pseudoMoves(board):
+    withMakeMove(board, move):
+      actions
+
+template withPlayerAsWhite*(board: var Board, actions: untyped): bool =
+  let didflip = board.player == black
+
+  if didflip:
+    board.flip()
+
+  actions
+
+  if didflip:
+    board.flip()
+
+  didflip

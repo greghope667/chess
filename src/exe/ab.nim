@@ -60,22 +60,15 @@ proc quiesce(board: var Board, alphap, beta, depth: int): int =
     alpha = stand_pat
 
   for move in pseudoMoves(board):
-    if board[move.dst].occupied:
-      let hist = makeMove(board, move)
-
-      if not inCheck(board):
+    if board[move.dst].occupied: # is capture
+      withMakeMove(board, move):
         nodes += 1
-        board.flip()
         let score = - quiesce(board, -beta, -alpha, depth-1)
-        board.flip()
 
         if score >= beta:
-          unmakeMove(board, move, hist)
           return beta
         if score > alpha:
           alpha = score
-
-      unmakeMove(board, move, hist)
 
   alpha
 
@@ -94,21 +87,16 @@ proc alphaBeta(board: var Board, alphap, beta, depth: int): int =
   moves.shuffle()
 
   for move in moves:
-    let hist = makeMove(board, move)
-    if not inCheck(board):
+    withMakeMove(board, move):
       nodes += 1
-      board.flip()
       let score = -alphaBeta(board, -beta, -alpha, depth-1)
-      board.flip()
 
       if score >= beta:
-        unmakeMove(board, move, hist)
         return beta
       if score > bestscore:
         bestscore = score
         if score > alpha:
           alpha = score
-    unmakeMove(board, move, hist)
 
   if bestscore == minus_inf:
     if inCheck(board):
@@ -125,24 +113,19 @@ proc alphaBeta(board: var Board, alphap, beta, depth: int): int =
 
   bestscore
 
-
 proc alphaBetaRoot(board: var Board, depth: int): tuple[move:Move, score:int] =
   result.score = minus_inf
 
   for move in pseudoMoves(board):
-    let hist = makeMove(board, move)
-
-    if not inCheck(board):
+    withMakeMove(board, move):
       nodes += 1
-      board.flip()
-      let score = -alphaBeta(board, minus_inf, plus_inf, depth-1) + randAdjust()
-      board.flip()
+      var score = -alphaBeta(board, minus_inf, plus_inf, depth-1)
+      if -100 < score and score < 100:
+        score += randAdjust()
 
       if score > result.score:
         result.move = move
         result.score = score
-
-    unmakeMove(board, move, hist)
 
 proc search(board: var Board, depth: int): tuple[move:Move, score:int, nodes:int] =
   nodes = 0

@@ -1,5 +1,7 @@
 import strutils
 
+### Pieces
+
 type
   Color* = enum
     white=0, black=1
@@ -31,48 +33,10 @@ func flip*(c: Color): Color =
 const emptySquare* = SquareContents()
 
 #[
-  Board layout
-
-  Currently using '0x88' representation (https://www.chessprogramming.org/0x88)
-  square = 0b0rrr0ccc (r = row/rank, c=col/file)
+  Square manipulation, conversion to/from rank+file
 ]#
 
 type
-  CastlingTypes* = enum
-    white_queenside, white_kingside, black_queenside, black_kingside
-  CastlingRights* = set[CastlingTypes]
-
-  Board* = object
-    rank1: uint64
-    halfmoves*: int32
-    fullmoves*: int32
-
-    rank2: uint64
-    castling*: CastlingRights
-    pawnmove*: Square
-    player*: Color
-    whitekingpos*:Square
-    blackkingpos*:Square
-
-    rank3: uint64
-    pad3: uint8
-
-    rank4: uint64
-    pad4: uint8
-
-    rank5: uint64
-    pad5: uint8
-
-    rank6: uint64
-    pad6: uint8
-
-    rank7: uint64
-    pad7: uint8
-
-    rank8: uint64
-    pad8: uint8
-
-  BitBoard* = set[0 .. 63]
   Square* = distinct uint8
   Distance* = distinct uint8
 
@@ -134,6 +98,50 @@ static:
   for s in squares():
     assert uint8(s) == uint8(s.toIdx().fromIdx())
 
+#[
+  Board layout
+
+  Currently using '0x88' representation (https://www.chessprogramming.org/0x88)
+  square = 0b0rrr0ccc (r = row/rank, c=col/file)
+]#
+
+type
+  CastlingTypes* = enum
+    white_queenside, white_kingside, black_queenside, black_kingside
+  CastlingRights* = set[CastlingTypes]
+
+  Board* = object
+    rank1: uint64
+    halfmoves*: int32
+    fullmoves*: int32
+
+    rank2: uint64
+    castling*: CastlingRights
+    pawnmove*: Square
+    player*: Color
+    whitekingpos*:Square
+    blackkingpos*:Square
+
+    rank3: uint64
+    pad3: uint8
+
+    rank4: uint64
+    pad4: uint8
+
+    rank5: uint64
+    pad5: uint8
+
+    rank6: uint64
+    pad6: uint8
+
+    rank7: uint64
+    pad7: uint8
+
+    rank8: uint64
+    pad8: uint8
+
+  BitBoard* = set[0 .. 63]
+
 func `[]`*(board: Board, s: Square): SquareContents =
   let cells = cast[ptr array[128, SquareContents]](unsafeAddr board)
   cells[][uint8(s)]
@@ -172,7 +180,4 @@ func flip*(board: var Board) =
   board.pawnmove = flip(board.pawnmove)
 
   flipswap(board.whitekingpos, board.blackkingpos)
-
-
-
 

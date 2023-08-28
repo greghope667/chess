@@ -54,16 +54,12 @@ proc negamax(board: var Board, depth: int): tuple[move:Move, score:int] =
   result.score = low(int)
 
   for move in pseudoMoves(board):
-    let hist = makeMove(board, move)
-    if not inCheck(board):
+    withMakeMove(board, move):
       nodes += 1
-      board.flip()
       let score = - negamax(board, depth-1).score + randAdjust()
       if score > result.score:
         result.move = move
         result.score = score
-      board.flip()
-    unmakeMove(board, move, hist)
 
   if result.score == low(int):
     if inCheck(board):

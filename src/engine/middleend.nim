@@ -23,16 +23,12 @@ proc doSearch() =
   let startTime = cpuTime()
 
   si.depth = 4
-  let flip = board.player == black
 
-  if flip:
-    board.flip()
-
-  (sr.bestmove, si.score, si.nodes) = search(board, si.depth)
+  let flip = withPlayerAsWhite(board):
+    (sr.bestmove, si.score, si.nodes) = search(board, si.depth)
 
   if flip:
     sr.bestmove = sr.bestmove.flip()
-    board.flip()
 
   si.pv.add(sr.bestmove)
 
